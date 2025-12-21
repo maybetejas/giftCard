@@ -1,0 +1,148 @@
+/* ---------- RESET ---------- */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ---------- FULL SCREEN ANIMATED GRADIENT ---------- */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(
+    120deg,
+    #3d0863,
+    #651d79,
+    #7a0637
+  );
+  background-size: 300% 300%;
+  animation: gradientShift 18s ease infinite;
+
+  overflow: hidden;
+}
+
+/* Gradient animation */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+#intro {
+  position: fixed;
+  inset: 0;
+  background: #050508;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 999;
+}
+
+.intro-text {
+  text-align: center;
+  color: #ffffff;
+  opacity: 0;
+
+  animation: introText 4s ease forwards;
+}
+
+/* Fade-out state for intro */
+#intro.fade-out {
+  animation: introFadeOut 1.2s ease forwards;
+}
+
+@keyframes introFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+
+@keyframes introText {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+
+/* ---------- CARD CONTAINER ---------- */
+.card {
+  width: 90vw;
+  max-width: 360px;
+  perspective: 1400px;
+}
+
+/* ---------- CARD IMAGE ---------- */
+.card img {
+  width: 100%;
+  height: auto;
+  display: block;
+
+  border-radius: 18px;
+
+  /* REALISTIC DEPTH */
+  box-shadow:
+    0 35px 90px rgba(0, 0, 0, 0.45),
+    0 0 80px rgba(255, 95, 162, 0.35),
+    inset 0 0 1px rgba(255, 255, 255, 0.35);
+
+  transform-style: preserve-3d;
+
+  /* Smooth JS-driven motion */
+  transition:
+    transform 0.15s ease-out,
+    box-shadow 0.25s ease-out;
+}
+
+/* ---------- PERFORMANCE SAFETY ---------- */
+.card img {
+  will-change: transform;
+}
+
+/* ---------- EMOJI RAIN ---------- */
+#emoji-rain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.emoji {
+  position: absolute;
+  top: -10%;
+  font-size: 26px;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  opacity: 0.9;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(120vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+
+/* ---------- MOBILE TYPOGRAPHY SAFETY ---------- */
+@media (max-width: 480px) {
+  .card {
+    max-width: 320px;
+  }
+}
+

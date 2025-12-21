@@ -52,16 +52,23 @@ setTimeout(() => {
 
 /* ================= CARD + 3D ================= */
 const card = document.querySelector(".card img");
-const MAX_TILT = 12;
+const MAX_TILT = 22;
 
 /* apply rotation */
+let currentX = 0;
+let currentY = 0;
+
 function setTilt(rx, ry) {
+  currentX += (rx - currentX) * 0.15;
+  currentY += (ry - currentY) * 0.15;
+
   card.style.transform = `
-    rotateX(${rx}deg)
-    rotateY(${ry}deg)
-    scale(1.03)
+    rotateX(${currentX}deg)
+    rotateY(${currentY}deg)
+    scale(1.06)
   `;
 }
+
 
 function resetTilt() {
   setTilt(0, 0);
@@ -74,15 +81,16 @@ function handleOrientation(event) {
 
   if (beta === null || gamma === null) return;
 
-  const rotateX = Math.max(
-    -MAX_TILT,
-    Math.min(MAX_TILT, -(beta / 90) * MAX_TILT)
-  );
+const rotateX = Math.max(
+  -MAX_TILT,
+  Math.min(MAX_TILT, -(beta / 45) * MAX_TILT)
+);
 
-  const rotateY = Math.max(
-    -MAX_TILT,
-    Math.min(MAX_TILT, (gamma / 45) * MAX_TILT)
-  );
+const rotateY = Math.max(
+  -MAX_TILT,
+  Math.min(MAX_TILT, (gamma / 25) * MAX_TILT)
+);
+
 
   setTilt(rotateX, rotateY);
 }

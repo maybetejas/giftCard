@@ -1,143 +1,175 @@
-/* ================= MUSIC ================= */
+﻿const startScreen = document.getElementById("start-screen");
+const storyScreen = document.getElementById("story-screen");
+const startButton = document.getElementById("start-button");
+const slide = document.getElementById("slide");
+const slideImage = document.getElementById("slide-image");
+const slideText = document.getElementById("slide-text");
+const finalEffects = document.getElementById("final-effects");
 const music = document.getElementById("bg-music");
-music.volume = 0.6;
 
-music.play().catch(() => {
-  document.addEventListener(
-    "click",
-    () => music.play(),
-    { once: true }
-  );
-});
+const TRANSITION_MS = 550;
 
-/* ================= INTRO REMOVE ================= */
-const intro = document.getElementById("intro");
+const slides = [
+  {
+    image: null,
+    text: "us. 💗\none year already?? 🥺",
+    duration: 2600,
+    kind: "opening"
+  },
+  {
+    image: "1.jpeg",
+    text: "remember when we first met…\nin the basement… we boom boom 😭💗\nyeah it started like THAT",
+    duration: 2300
+  },
+  {
+    image: "2.jpeg",
+    text: "our first anniversary 🥺🍣\nwe had sushi…\ni dressed like an idiot\nand you looked like a literal goddess 💖✨",
+    duration: 2400
+  },
+  {
+    image: "3.jpeg",
+    text: "this anniversary… just us in the park 🌿💗\ngetting bitten by mosquitoes 😭\nkinda sad… but still us",
+    duration: 2400
+  },
+  {
+    image: null,
+    text: "YOU WERE IN RUSSIA…\nso we didn't get to celebrate our anniversary 💔\nbut you were coming back…\nand i missed you so much 🥺",
+    duration: 3700,
+    kind: "drop"
+  },
+  {
+    image: "4.jpeg",
+    text: "and then you came back like—\n\"bitch you better girl mode 😭💅\"\n\"i want a girlfriend not a boyfriend\"\nand you helped me find myself again 💗",
+    duration: 2700
+  },
+  {
+    image: "5.jpeg",
+    text: "we boom boomed at my house 💀💗\nthen went to toons for burgers\nlowkey ass burgers…\nbut nothing is ass when i'm with you 😭💕",
+    duration: 2400
+  },
+  {
+    image: "6.jpeg",
+    text: "just us in the mall…\nsitting in that shady elevator corner 😭\ni love these random little moments with you 🫶",
+    duration: 2300
+  },
+  {
+    image: "7.jpeg",
+    text: "this year started with a bang 💖✨\nme and my baby all dressed up\nsissy spin energy 💅🌸\nflowers… vibes… everything felt perfect",
+    duration: 2400
+  },
+  {
+    image: "8.jpeg",
+    text: "and this is you on my birthday 🎂💗\nyou always take care of me\nyou're literally the best girlfriend ever 🥺💖",
+    duration: 2400
+  },
+  {
+    image: null,
+    text: "happy 1 year anniversary baby 💕🎀\ni love you so much\n\nto be continued…\nfor as long as we're alive 💗✨",
+    duration: null,
+    kind: "final"
+  }
+];
 
-setTimeout(() => {
-  if (!intro) return;
+let index = 0;
+let started = false;
+let finalParticlesInterval = null;
 
-  intro.classList.add("fade-out");
+function renderSlide(data) {
+  slide.classList.remove("has-image", "no-image", "final");
+
+  if (data.image) {
+    slideImage.classList.remove("hidden");
+    slideImage.src = data.image;
+    slideImage.alt = "Memory photo";
+    slideImage.style.animation = "none";
+    void slideImage.offsetWidth;
+    slideImage.style.setProperty("--zoom-duration", `${data.duration || 2600}ms`);
+    slideImage.style.animation = "";
+    slide.classList.add("has-image");
+  } else {
+    slideImage.classList.add("hidden");
+    slideImage.removeAttribute("src");
+    slideImage.alt = "";
+    slide.classList.add("no-image");
+  }
+
+  if (data.kind === "final") {
+    slide.classList.add("final");
+    startFinalEffects();
+  } else {
+    stopFinalEffects();
+  }
+
+  slideText.textContent = data.text;
+}
+
+function stepStory() {
+  const data = slides[index];
+  renderSlide(data);
+
+  if (data.duration == null) {
+    return;
+  }
 
   setTimeout(() => {
-    intro.remove(); // remove AFTER fade completes
-  }, 1200);
+    slide.classList.add("is-fading");
 
-}, 4200);
-
-
-/* ================= EMOJI CELEBRATION ================= */
-const emojiContainer = document.getElementById("emoji-rain");
-const emojis = ["🦇", "💖", "✨"];
-
-function spawnEmoji() {
-  if (!emojiContainer) return;
-
-  const emoji = document.createElement("div");
-  emoji.className = "emoji";
-  emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-
-  emoji.style.left = Math.random() * 100 + "vw";
-  emoji.style.animationDuration = 2 + Math.random() * 2 + "s";
-
-  emojiContainer.appendChild(emoji);
-
-  setTimeout(() => emoji.remove(), 4000);
+    setTimeout(() => {
+      slide.classList.remove("is-fading");
+      index += 1;
+      stepStory();
+    }, TRANSITION_MS);
+  }, data.duration);
 }
 
-const emojiInterval = setInterval(spawnEmoji, 180);
+function spawnParticle() {
+  const symbols = ["💖", "✨", "💗", "🎀"];
+  const particle = document.createElement("span");
+  particle.className = "particle";
+  particle.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+  particle.style.left = `${Math.random() * 100}%`;
+  particle.style.animationDuration = `${3 + Math.random() * 2.5}s`;
+  finalEffects.appendChild(particle);
 
-setTimeout(() => {
-  clearInterval(emojiInterval);
-}, 4000);
-
-/* ================= CARD + 3D ================= */
-const card = document.querySelector(".card img");
-const MAX_TILT = 22;
-
-/* apply rotation */
-let currentX = 0;
-let currentY = 0;
-
-function setTilt(rx, ry) {
-  currentX += (rx - currentX) * 0.15;
-  currentY += (ry - currentY) * 0.15;
-
-  card.style.transform = `
-    rotateX(${currentX}deg)
-    rotateY(${currentY}deg)
-    scale(1.06)
-  `;
+  setTimeout(() => {
+    particle.remove();
+  }, 6000);
 }
 
-
-function resetTilt() {
-  setTilt(0, 0);
-}
-
-/* ================= GYROSCOPE ================= */
-function handleOrientation(event) {
-  const beta = event.beta;   // front-back
-  const gamma = event.gamma; // left-right
-
-  if (beta === null || gamma === null) return;
-
-const rotateX = Math.max(
-  -MAX_TILT,
-  Math.min(MAX_TILT, -(beta / 45) * MAX_TILT)
-);
-
-const rotateY = Math.max(
-  -MAX_TILT,
-  Math.min(MAX_TILT, (gamma / 25) * MAX_TILT)
-);
-
-
-  setTilt(rotateX, rotateY);
-}
-
-function enableMotion() {
-  if (
-    typeof DeviceOrientationEvent !== "undefined" &&
-    typeof DeviceOrientationEvent.requestPermission === "function"
-  ) {
-    DeviceOrientationEvent.requestPermission().then((state) => {
-      if (state === "granted") {
-        window.addEventListener("deviceorientation", handleOrientation);
-      }
-    });
-  } else {
-    window.addEventListener("deviceorientation", handleOrientation);
+function startFinalEffects() {
+  finalEffects.classList.remove("hidden");
+  if (finalParticlesInterval) {
+    return;
   }
+
+  finalParticlesInterval = setInterval(spawnParticle, 280);
 }
 
-document.addEventListener("click", enableMotion, { once: true });
+function stopFinalEffects() {
+  finalEffects.classList.add("hidden");
+  if (finalParticlesInterval) {
+    clearInterval(finalParticlesInterval);
+    finalParticlesInterval = null;
+  }
+  finalEffects.innerHTML = "";
+}
 
-/* ================= TOUCH FALLBACK ================= */
-card.addEventListener("touchmove", (e) => {
-  const rect = card.getBoundingClientRect();
-  const touch = e.touches[0];
+function startExperience() {
+  if (started) {
+    return;
+  }
 
-  const x = touch.clientX - rect.left;
-  const y = touch.clientY - rect.top;
+  started = true;
+  startScreen.classList.add("hidden");
+  storyScreen.classList.remove("hidden");
 
-  const rotateY = ((x / rect.width) - 0.5) * MAX_TILT * 2;
-  const rotateX = -((y / rect.height) - 0.5) * MAX_TILT * 2;
+  music.currentTime = 0;
+  music.loop = false;
+  music.volume = 0.8;
+  music.play().catch(() => {
+  });
 
-  setTilt(rotateX, rotateY);
-});
+  stepStory();
+}
 
-card.addEventListener("touchend", resetTilt);
-
-/* ================= DESKTOP MOUSE ================= */
-card.addEventListener("mousemove", (e) => {
-  const rect = card.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-
-  const rotateY = ((x / rect.width) - 0.5) * MAX_TILT * 2;
-  const rotateX = -((y / rect.height) - 0.5) * MAX_TILT * 2;
-
-  setTilt(rotateX, rotateY);
-});
-
-card.addEventListener("mouseleave", resetTilt);
+startButton.addEventListener("click", startExperience);

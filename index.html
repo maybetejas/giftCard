@@ -2,33 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lia Card</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Anniversary Story</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <audio id="bg-music" src="song.mp3" preload="auto"></audio>
 
-  <!-- Background Music -->
-  <audio id="bg-music" src="song.mp3" autoplay loop></audio>
+  <main class="app">
+    <section id="start-screen" class="start-screen">
+      <button id="start-button" class="start-button" type="button" aria-label="Open gift">
+        <span class="gift" aria-hidden="true">🎁</span>
+        <span class="start-text">open me 💝</span>
+      </button>
+    </section>
 
-  <!-- Intro Overlay -->
-  <div id="intro">
-    <div class="intro-text">
-      <h1>HAPPY 8 MONTHS BABY</h1>
-      <p>I WUV U SM</p>
-    </div>
+    <section id="story-screen" class="story-screen hidden" aria-live="polite">
+      <div id="slide" class="slide">
+        <img id="slide-image" class="slide-image hidden" alt="" />
+        <p id="slide-text" class="slide-text"></p>
+      </div>
+      <div id="final-effects" class="final-effects hidden" aria-hidden="true"></div>
+    </section>
+  </main>
 
-      <div id="emoji-rain"></div>
-  </div>
-
-  <!-- Card -->
-  <div class="card">
-    <img src="card-image.png" alt="Lia TCG Card" />
-  </div>
-
-  <!-- JS -->
   <script src="script.js"></script>
-
 </body>
 </html>

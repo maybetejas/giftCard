@@ -1,148 +1,195 @@
-/* ---------- RESET ---------- */
+:root {
+  --bg: #000000;
+  --pink: #ff70d6;
+  --purple: #c48bff;
+  --white: #f9f5ff;
+  --overlay: rgba(0, 0, 0, 0.46);
+}
+
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
+html,
+body {
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
-  min-height: 100vh;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-/* ---------- FULL SCREEN ANIMATED GRADIENT ---------- */
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  background: linear-gradient(
-    120deg,
-    #3d0863,
-    #651d79,
-    #7a0637
-  );
-  background-size: 300% 300%;
-  animation: gradientShift 18s ease infinite;
-
+  background: var(--bg);
+  color: var(--white);
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
   overflow: hidden;
 }
 
-/* Gradient animation */
-@keyframes gradientShift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-#intro {
-  position: fixed;
-  inset: 0;
-  background: #050508;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  z-index: 999;
-}
-
-.intro-text {
-  text-align: center;
-  color: #ffffff;
-  opacity: 0;
-
-  animation: introText 4s ease forwards;
-}
-
-/* Fade-out state for intro */
-#intro.fade-out {
-  animation: introFadeOut 1.2s ease forwards;
-}
-
-@keyframes introFadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-
-@keyframes introText {
-  0%   { opacity: 0; }
-  20%  { opacity: 1; }
-  80%  { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-
-/* ---------- CARD CONTAINER ---------- */
-.card {
-  width: 90vw;
-  max-width: 360px;
-  perspective: 1400px;
-}
-
-/* ---------- CARD IMAGE ---------- */
-.card img {
+.app {
+  position: relative;
   width: 100%;
-  height: auto;
-  display: block;
-
-  border-radius: 18px;
-
-  /* REALISTIC DEPTH */
-  box-shadow:
-    0 35px 90px rgba(0, 0, 0, 0.45),
-    0 0 80px rgba(255, 95, 162, 0.35),
-    inset 0 0 1px rgba(255, 255, 255, 0.35);
-
-  transform-style: preserve-3d;
-
-  /* Smooth JS-driven motion */
-  transition:
-    transform 0.15s ease-out,
-    box-shadow 0.25s ease-out;
+  height: 100%;
 }
 
-/* ---------- PERFORMANCE SAFETY ---------- */
-.card img {
-  will-change: transform;
+.hidden {
+  display: none !important;
 }
 
-/* ---------- EMOJI RAIN ---------- */
-#emoji-rain {
+.start-screen,
+.story-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.start-button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--white);
+  cursor: pointer;
+}
+
+.gift {
+  font-size: 72px;
+  line-height: 1;
+  filter: drop-shadow(0 0 18px rgba(255, 112, 214, 0.5));
+  animation: giftPulse 1.9s ease-in-out infinite;
+}
+
+.start-text {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-shadow: 0 0 8px rgba(255, 112, 214, 0.72), 0 0 20px rgba(196, 139, 255, 0.5);
+}
+
+.story-screen {
+  padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom);
+}
+
+.slide {
+  position: relative;
+  width: min(95vw, 420px);
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 550ms ease;
+}
+
+.slide.is-fading {
+  opacity: 0;
+}
+
+.slide-image {
+  width: 100%;
+  max-height: 74vh;
+  object-fit: cover;
+  border-radius: 22px;
+  box-shadow: 0 0 35px rgba(255, 112, 214, 0.2), 0 0 70px rgba(196, 139, 255, 0.12);
+  animation: slowZoom var(--zoom-duration, 2400ms) linear forwards;
+}
+
+.slide-text {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 4.5vh;
+  margin: 0;
+  text-align: center;
+  white-space: pre-line;
+  font-size: clamp(21px, 5.4vw, 29px);
+  line-height: 1.36;
+  font-weight: 700;
+  text-wrap: balance;
+  text-shadow: 0 0 7px rgba(255, 112, 214, 0.78), 0 0 20px rgba(196, 139, 255, 0.55);
+  animation: textFade 520ms ease both;
+}
+
+.slide.has-image .slide-text {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0));
+  padding: 30px 8px 5px;
+  border-radius: 0 0 18px 18px;
+}
+
+.slide.no-image .slide-text,
+.slide.final .slide-text {
+  position: static;
+  padding: 0 6px;
+  font-size: clamp(22px, 6.2vw, 34px);
+  background: transparent;
+}
+
+.slide.final .slide-text {
+  animation: finalScale 2.2s ease-in-out infinite alternate;
+}
+
+.final-effects {
   position: absolute;
   inset: 0;
   pointer-events: none;
   overflow: hidden;
 }
 
-.emoji {
+.particle {
   position: absolute;
-  top: -10%;
-  font-size: 26px;
-  animation-name: fall;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
+  top: 100%;
+  font-size: 22px;
   opacity: 0.9;
+  animation: floatUp linear forwards;
 }
 
-@keyframes fall {
-  to {
-    transform: translateY(120vh) rotate(360deg);
-    opacity: 0;
+@keyframes giftPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
   }
 }
 
+@keyframes slowZoom {
+  from {
+    transform: scale(1.02);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
 
-/* ---------- MOBILE TYPOGRAPHY SAFETY ---------- */
-@media (max-width: 480px) {
-  .card {
-    max-width: 320px;
+@keyframes textFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes finalScale {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes floatUp {
+  to {
+    transform: translateY(-120vh) rotate(20deg);
+    opacity: 0;
   }
 }
 
